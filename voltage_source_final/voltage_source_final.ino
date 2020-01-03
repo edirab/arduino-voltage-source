@@ -183,6 +183,19 @@ void nine(){
   digitalWrite(pinE, LOW);   
   digitalWrite(pinF, HIGH);   
   digitalWrite(pinG, HIGH);   
+  }
+
+// функция фильтрации
+float filter(float value) {
+  kalmangain = errestimate / (errestimate + errmeasure);
+  currentestimate = lastestimate + kalmangain * (value - lastestimate);
+  errestimate =  (1.0 - kalmangain) * errestimate + fabs(lastestimate - currentestimate) * q;
+  lastestimate = currentestimate;
+  return currentestimate;
+}
+
+float filter2(int value){
+  
 }
 
 void display_(){
@@ -292,6 +305,15 @@ void dotCheck(){
 
 void loop() {
   
-  AskSerial();
+  analogInput = analogRead(A0);
+  Serial.print(analogInput);
+  Serial.print(" = ");
+  
+  value = analogInput * U_max / 1024;
+  valueFiltered = filter(value);
+  Serial.println(value);
+  Serial.println(valueFiltered);
+  
+  dtostrf(valueFiltered, 4, 2, buff);
   display_();
 }
